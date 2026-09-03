@@ -138,28 +138,6 @@ A partir de las consultas realizadas se obtuvieron los siguientes resultados:
 
 3. La facturación total del período fue de **$6.444**, correspondiente a **10 pedidos**, con un ticket promedio de **$644,40**.
 
----
-
-## Tecnologías utilizadas
-
-* SQL
-* SQL Server
-* SQL Server Management Studio (SSMS)
-* Git
-* GitHub
-
----
-
-## Estructura del repositorio
-
-```text
-RetailPro/
-│
-├── ventas_tech_db.sql
-├── m4_consultas_negocio.sql
-├── m5_consultas_joins.sql
-└── README.md
-```
 
 ---
 
