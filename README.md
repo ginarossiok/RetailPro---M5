@@ -1,147 +1,173 @@
-# RetailPro – Proyecto de Data Analytics
+Copiá este bloque completo y pegalo en el editor de tu `README.md` en GitHub:
+
+```markdown
+# RetailPro - Proyecto de Data Analytics
+
+**Autora:** Gina Rossi
 
 ## Descripción del proyecto
 
-RetailPro es un proyecto de análisis de datos orientado a una empresa de retail tecnológico. El objetivo es construir una base de datos relacional que permita organizar la información comercial y obtener métricas relevantes para la toma de decisiones.
+RetailPro es un proyecto académico de análisis de datos orientado a una empresa de retail tecnológico. Su objetivo es organizar la información comercial en una base de datos relacional y obtener métricas sobre ventas, productos y clientes para apoyar la toma de decisiones.
 
-A lo largo del proyecto se desarrollan las distintas etapas del proceso de análisis de datos, desde el diseño del modelo y la creación de la base de datos hasta la extracción de información mediante SQL y su posterior visualización.
+Este repositorio reúne el trabajo de los módulos 3, 4 y 5: creación de la base de datos, consultas de negocio e integración de tablas mediante SQL.
 
----
+## Herramientas utilizadas
 
-## Base de datos
+- **SQL Server Express:** gestión de la base de datos.
+- **SQL Server Management Studio (SSMS):** ejecución de scripts y revisión de resultados.
+- **GitHub:** almacenamiento de archivos y documentación.
+- **ChatGPT:** asistencia para revisar consultas SQL, interpretar resultados y mejorar la documentación, evaluando críticamente sus sugerencias.
 
-La base de datos utilizada en el proyecto es:
+## Base de datos y modelo relacional
 
-`Ventas_Tech_DB`
+La base de datos se llama `Ventas_Tech_DB` y contiene cuatro tablas:
 
-El modelo contiene las siguientes tablas:
+| Tabla | Clave primaria | Relación |
+| --- | --- | --- |
+| `categorias` | `id_categoria` | Una categoría puede tener varios productos. |
+| `clientes` | `id_cliente` | Un cliente puede tener varios registros de venta. |
+| `productos` | `id_producto` | Se relaciona con `categorias` mediante `id_categoria`. |
+| `ventas` | `id_venta` | Se relaciona con `clientes` y `productos`. |
 
-* `categorias`
-* `clientes`
-* `productos`
-* `ventas`
+Las claves primarias y foráneas mantienen la integridad referencial.
 
-Estas tablas se relacionan mediante claves primarias y foráneas para mantener la integridad referencial de la información.
+Cada fila de `ventas` registra un producto vendido a un cliente, indicando cantidad, precio unitario y fecha. El modelo no incluye un identificador de pedido que agrupe varios productos.
 
----
+Por ese motivo:
 
-## Módulo 3 – Creación de la base de datos
+- `COUNT(*)` cuenta registros de venta.
+- `AVG(cantidad * precio_unitario)` calcula el importe promedio por registro.
 
-En esta etapa se desarrolló el script SQL encargado de crear y poblar la base de datos.
+## Contenido del repositorio
 
-El archivo incluye:
+### Módulo 3 - Creación y carga de la base
 
-* Creación de la base de datos `Ventas_Tech_DB`.
-* Definición de las tablas mediante sentencias DDL.
-* Definición de claves primarias y foráneas.
-* Carga inicial de datos mediante sentencias DML.
-* Inclusión de registros de ejemplo sin ventas para validar consultas con `LEFT JOIN`.
-* Consultas de validación de la información.
+El script de M3 incluye:
 
----
+- Creación de `Ventas_Tech_DB`.
+- Definición de tablas mediante sentencias DDL.
+- Definición de claves primarias y foráneas.
+- Carga de datos mediante sentencias DML.
+- Consultas de validación y conteo de registros.
 
-## Módulo 4 – Consultas SQL de negocio
+### Módulo 4 - Consultas de negocio
 
-En el archivo `m4_consultas_negocio.sql` se desarrollaron consultas orientadas a responder preguntas de negocio a partir de la tabla `ventas`.
+El archivo `m4_consultas_negocio.sql` contiene:
 
-### Consulta 1 – Resumen ejecutivo mensual
+1. Resumen mensual de facturación, cantidad de registros e importe promedio.
+2. Top 5 de productos por facturación, con unidades vendidas.
+3. Clientes con más de un registro de venta y su gasto acumulado.
+4. Comparación de la facturación mensual con el promedio de los meses disponibles mediante `CASE`.
 
-Calcula por mes:
+La facturación se calcula como:
 
-* Total facturado.
-* Cantidad de pedidos.
-* Ticket promedio.
+    cantidad * precio_unitario
 
-La facturación de cada venta se obtiene mediante:
+Se utiliza el precio registrado en cada venta para conservar el importe histórico de la operación.
 
-`cantidad * precio_unitario`
+### Módulo 5 - Consultas con JOIN y UNION ALL
 
-### Consulta 2 – Ranking de productos
+El archivo `m5_consultas_joins.sql` contiene:
 
-Obtiene el Top 5 de productos según su facturación total, mostrando:
+1. **Consulta base:** integra `ventas`, `clientes`, `productos` y `categorias` mediante `INNER JOIN`.
+2. **Clientes sin ventas:** utiliza `LEFT JOIN` y `WHERE v.id_venta IS NULL`.
+3. **Productos sin ventas:** utiliza `LEFT JOIN` con ventas e incorpora la categoría del producto mediante `INNER JOIN`.
+4. **Consolidación por período:** combina mediante `UNION ALL` las ventas del 5 al 10 y del 11 al 15 de marzo de 2024.
 
-* ID del producto.
-* Unidades vendidas.
-* Total facturado.
+La consulta base es una sentencia `SELECT`; el script no crea una vista mediante `CREATE VIEW`.
 
-### Consulta 3 – Clientes recurrentes
+En la consolidación, la columna literal denominada `canal` identifica períodos. No representa un canal comercial real, porque la base no contiene ese atributo.
 
-Identifica los clientes que realizaron más de un pedido y muestra:
+## Cómo ejecutar los scripts SQL
 
-* ID del cliente.
-* Cantidad de pedidos.
-* Total gastado.
+### Requisitos
 
-### Consulta 4 – Comparación con el promedio mensual
+- SQL Server Express instalado y una instancia en ejecución.
+- SQL Server Management Studio (SSMS).
+- Permisos para crear la base de datos y sus tablas.
+- Scripts descargados del repositorio.
 
-Calcula la facturación de cada mes y la compara con el promedio mensual general mediante `CASE WHEN`, permitiendo identificar el desempeño de cada período respecto del promedio.
+### Primera ejecución
 
----
+1. Abrir SSMS y conectarse a la instancia de SQL Server.
+2. Abrir el script de creación y carga de M3.
+3. Seleccionar y ejecutar primero únicamente:
 
-## Módulo 5 – Consultas con JOINs
+       CREATE DATABASE Ventas_Tech_DB;
 
-En el archivo `m5_consultas_joins.sql` se desarrollaron consultas para cruzar las tablas del modelo relacional y enriquecer el análisis de negocio.
+4. Ejecutar el resto del script desde:
 
-### Consulta 1 – Vista base del proyecto
+       USE Ventas_Tech_DB;
 
-Combina mediante `INNER JOIN` las tablas `ventas`, `clientes`, `productos` y `categorias` para obtener una vista única con información descriptiva de cada operación.
+   Esto crea las tablas, carga los datos y ejecuta las validaciones.
 
-La consulta incluye, entre otros datos:
+5. Abrir y ejecutar `m4_consultas_negocio.sql`.
+6. Abrir y ejecutar `m5_consultas_joins.sql`.
+7. Revisar la pestaña de mensajes y las cuadrículas de resultados.
 
-* Fecha de la venta.
-* Identificación y nombre del cliente.
-* Email y ciudad.
-* Identificación y nombre del producto.
-* Categoría del producto.
-* Cantidad.
-* Precio unitario.
-* Total de venta.
+### Si la base ya existe
 
-Esta vista funcionará como fuente principal de datos para el posterior análisis en Power BI.
+Para consultar los datos existentes, ejecutar directamente los scripts de M4 y M5.
 
-### Consulta 2 – Clientes sin ventas
+No volver a ejecutar `CREATE DATABASE`.
 
-Utiliza `LEFT JOIN` y `WHERE ... IS NULL` para identificar clientes registrados que todavía no realizaron ninguna compra.
+El script de M3 contiene `DROP TABLE IF EXISTS`, por lo que su sección de recreación elimina las tablas y sus datos antes de volver a cargar la muestra. Ejecutarla únicamente cuando se quiera reinicializar la base de práctica.
 
-Muestra:
+## Validación de los datos
 
-* Nombre del cliente.
-* Email.
-* Fecha de registro.
+La versión del script de M3 revisada contiene:
 
-### Consulta 3 – Productos sin ventas
+| Tabla | Cantidad de registros |
+| --- | ---: |
+| `categorias` | 4 |
+| `clientes` | 5 |
+| `productos` | 6 |
+| `ventas` | 10 |
 
-Utiliza `LEFT JOIN` y `WHERE ... IS NULL` para identificar productos del catálogo que no poseen ventas registradas.
+Las ventas corresponden al período del **5 al 15 de marzo de 2024**.
 
-Muestra:
+Los conteos pueden verificarse mediante las consultas `COUNT(*)` incluidas al final del script de M3.
 
-* Nombre del producto.
-* Categoría.
-* Precio.
+En esta muestra, todos los clientes y productos tienen ventas. Por lo tanto, las consultas que buscan clientes y productos sin ventas devuelven cero filas.
 
-### Consulta 4 – Consolidado por origen
+Si se agregan registros sin ventas para probar los `LEFT JOIN`, deben actualizarse los conteos esperados.
 
-Utiliza `UNION ALL` para consolidar las ventas de dos períodos diferentes. En cada `SELECT` se crea una columna de texto fija denominada `canal`, que identifica el período de origen.
+## Principales resultados
 
-Luego se agrupan los resultados para obtener la facturación total correspondiente a cada origen.
+| Indicador | Resultado |
+| --- | ---: |
+| Facturación total | $6.444,00 |
+| Registros de venta | 10 |
+| Importe promedio por registro | $644,40 |
+| Facturación de Laptop Pro 15 | $3.600,00 |
+| Participación de Laptop Pro 15 | 55,9 % |
+| Gasto acumulado de María López | $2.640,00 en 2 registros |
 
+Los importes se muestran con el símbolo `$`; el script no especifica la moneda.
 
----
+Durante la revisión con IA, estos resultados se recalcularon a partir de los datos incluidos en las sentencias `INSERT`, sin ejecutar SQL Server.
 
-## Principales hallazgos
+## Alcance y limitaciones del análisis
 
-A partir de las consultas realizadas se obtuvieron los siguientes resultados:
+- La muestra contiene ventas de una parte de marzo de 2024. No permite inferir crecimiento ni estacionalidad.
+- Marzo aparece como “Igual al promedio” porque es el único mes disponible.
+- Las consultas agrupan por `MONTH(fecha_venta)`. Si se incorporan varios años, debe agregarse el año a la agrupación para evitar mezclar períodos.
+- La facturación no equivale a rentabilidad: no se dispone de costos ni márgenes.
+- Los registros de venta no permiten identificar pedidos con varios productos ni analizar canastas de compra.
+- Las acciones comerciales propuestas deben validarse con más información antes de aplicarse.
 
-1. El producto 1 fue el de mayor facturación, generando **$3.600**, aproximadamente el **55,9 % de la facturación total**.
+## Uso de IA en el proyecto
 
-2. El cliente 1 fue el cliente recurrente con mayor gasto acumulado, con un total de **$2.640** distribuido en **2 pedidos**.
+Se utilizó ChatGPT como apoyo para revisar la consulta base de M5, interpretar resultados de M4 y preparar la documentación.
 
-3. La facturación total del período fue de **$6.444**, correspondiente a **10 pedidos**, con un ticket promedio de **$644,40**.
+En la revisión SQL se evaluó eliminar `ORDER BY` cuando la extracción no requiera datos ordenados. Para la revisión cronológica de las ventas se decidió conservarlo. No se afirmó una mejora de rendimiento medida.
 
-
----
+La documentación se ajustó para distinguir registros de venta de pedidos, períodos de canales comerciales y resultados observados de propuestas que requieren validación.
 
 ## Próximas etapas
 
-En los siguientes módulos se continuará ampliando el proyecto a partir de la vista enriquecida construida mediante `JOIN`, avanzando hacia la conexión de los datos con Power BI y la construcción de visualizaciones y dashboards.
-
+- Ampliar y validar el conjunto de datos.
+- Adaptar las consultas temporales si se incorporan nuevos años.
+- Conectar la información con Power BI.
+- Construir visualizaciones y dashboards para el análisis comercial.
+```
