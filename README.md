@@ -1,6 +1,3 @@
-Copiá este bloque completo y pegalo en el editor de tu `README.md` en GitHub:
-
-```markdown
 # RetailPro - Proyecto de Data Analytics
 
 **Autora:** Gina Rossi
@@ -170,4 +167,3 @@ La documentación se ajustó para distinguir registros de venta de pedidos, per�
 - Adaptar las consultas temporales si se incorporan nuevos años.
 - Conectar la información con Power BI.
 - Construir visualizaciones y dashboards para el análisis comercial.
-```
